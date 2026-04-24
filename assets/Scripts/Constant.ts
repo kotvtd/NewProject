@@ -15,3 +15,10 @@ export const DIRECTION_CONST ={
     LEFT: "Left",
     RIGHT: "Right"
 }
+
+export const HERO_CONST = {
+    HERO_1: "Hero_1",
+    HERO_2: "Hero_2",
+    HERO_3: "Hero_3",
+    HERO_4: "Hero_4",
+}
