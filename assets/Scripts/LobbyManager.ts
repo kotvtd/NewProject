@@ -15,9 +15,6 @@ export class LobbyManager extends Component {
     start() {
     }
     protected onEnable(): void {
-        this.playerNode = instantiate(this.player);
-        this.playerNode.setParent(this.playerPos);
-        this.playerNode.setPosition(0, 0, 0);
     }
     
     update(deltaTime: number) {
@@ -25,7 +22,6 @@ export class LobbyManager extends Component {
     }
     
     protected onDisable(): void {
-        this.playerNode.destroy();
     }
 }
 

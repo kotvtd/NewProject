@@ -1,6 +1,8 @@
 import { _decorator, Component, EventTouch, Node } from 'cc';
 const { ccclass, property } = _decorator;
 import EmitterManager from './EmitterManager';
+import { LANES } from './Constant';
+import { RUNTIME_BASED } from 'cc/env';
 
 @ccclass('BlockManager')
 export class BlockManager extends Component {
@@ -10,21 +12,36 @@ export class BlockManager extends Component {
     private emitter = EmitterManager.getInstance();
 
     private mapHero_Frame: Map<Node, Node> = new Map();
+    
 
     protected onEnable(): void {
         this.emitter.registerEvent("ON_PUT_HERO", this.onPutHero, this);
+        this.emitter.registerEvent("ON_CHOOSE_HERO", this.onChooseHero, this);
+        this.emitter.registerEvent("HERO_DIE", this.onHeroDie, this);
+
+        this.listBlock.forEach(block => {
+            block.on(Node.EventType.TOUCH_END, this.onClickBlock, this);
+        });
+
     }
 
     protected onLoad(): void {
         this.listBlock = this.node.children;
+    }
+
+    protected start(): void {
         this.listBlock.forEach(block => {
-            block.on(Node.EventType.TOUCH_END, this.onClickBlock, this);
+            block.active = false;
         })
     }
 
 
     protected onDisable(): void {
         this.emitter.removeAllEvents(this);
+        this.listBlock.forEach(block => {
+            block.off(Node.EventType.TOUCH_END, this.onClickBlock, this);
+        });
+        this.reset();
     }
 
 
@@ -37,9 +54,41 @@ export class BlockManager extends Component {
     onPutHero(data):void {
         const frame: Node = data.frame as Node;
         const hero: Node = data.hero as Node;
+        console.log(hero);
         this.mapHero_Frame.set(hero, frame);
-        frame.off(Node.EventType.TOUCH_END, this.onClickBlock, this);
+
+        this.listBlock.forEach(block => {
+            block.active = false;
+        })
+        this.emitter.emit("END_PUT_HERO");
 
     }
+
+    onChooseHero(){
+        const blockMap = new Set(this.mapHero_Frame.values());
+        this.listBlock.forEach(frame => {
+            frame.active = !blockMap.has(frame);
+        });
+    }
+
+    onHeroDie(data) {
+        const hero: Node = data as Node;
+        if(!this.mapHero_Frame.has(hero)) {
+            return;
+        }
+        this.mapHero_Frame.delete(hero);
+    }
+
+    reset() {
+        this.mapHero_Frame.forEach((frame, hero) => {
+            if(hero && hero.isValid){
+                hero.destroy();
+            }
+        })
+        this.mapHero_Frame.clear();
+    }
+
+
 }
+
 

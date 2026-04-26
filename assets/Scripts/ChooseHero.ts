@@ -27,10 +27,15 @@ export class ChooseHero extends Component {
         this.chooseHero.forEach(choose=> {
             choose.on(Node.EventType.TOUCH_END, this.onChooseHero, this)
         })
+        this.emitter.registerEvent("END_PUT_HERO", this.onEndPutHero, this)
     }
 
     protected start(): void {
 
+    }
+
+    protected onDisable(): void {
+        this.emitter.removeAllEvents(this);
     }
 
     onChooseHero(event: EventTouch): void {
@@ -43,6 +48,9 @@ export class ChooseHero extends Component {
         this.emitter.emit("ON_CHOOSE_HERO", prefab);
     }
 
+    onEndPutHero(){
+        this.frameFocus.active = false;
+    }
     
 }
 

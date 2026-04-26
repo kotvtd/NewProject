@@ -6,5 +6,32 @@
       "height": 720
     }
   },
-  "custom_joint_texture_layouts": []
+  "custom_joint_texture_layouts": [],
+  "physics": {
+    "collisionGroups": [
+      {
+        "index": 1,
+        "name": "enemy"
+      },
+      {
+        "index": 2,
+        "name": "bullet"
+      },
+      {
+        "index": 3,
+        "name": "hero"
+      },
+      {
+        "index": 4,
+        "name": "lost"
+      }
+    ],
+    "collisionMatrix": {
+      "0": 0,
+      "1": 24,
+      "2": 0,
+      "3": 2,
+      "4": 2
+    }
+  }
 }

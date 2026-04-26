@@ -1,5 +1,5 @@
 export const NODE_CONST = {
-    LOOBY: "Lobby",
+    LOBBY: "Lobby",
     ROOM: "Room",
 }
 
@@ -21,4 +21,11 @@ export const HERO_CONST = {
     HERO_2: "Hero_2",
     HERO_3: "Hero_3",
     HERO_4: "Hero_4",
+}
+
+export const LANES = {
+    LANE_1: 0,
+    LANE_2: 1,
+    LANE_3: 2,
+    LAND_4: 3
 }

@@ -2,12 +2,12 @@
   "ver": "1.1.43",
   "importer": "prefab",
   "imported": true,
-  "uuid": "1c469a93-7106-406d-8447-dfa9fa83673f",
+  "uuid": "d8a50285-9c58-421b-b2eb-07c965db94f5",
   "files": [
     ".json"
   ],
   "subMetas": {},
   "userData": {
-    "syncNodeName": "Character_Sample_10"
+    "syncNodeName": "Bullet"
   }
 }
