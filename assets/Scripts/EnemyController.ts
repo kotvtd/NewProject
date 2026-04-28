@@ -9,7 +9,7 @@ const { ccclass, property } = _decorator;
 export class EnemyController extends Component {
 
     private collider: Collider2D | null = null;
-    private emitter: EmitterManager = EmitterManager.getInstance();
+    protected emitter: EmitterManager = EmitterManager.getInstance();
     lane: number = 0;
 
     private attackTime: number = 0.8;
@@ -110,17 +110,17 @@ export class EnemyController extends Component {
         if(this.currentHp <= 0){
             this.die();
         }
-        this.updateprogressBar();
+        this.updateProgressBar();
     }
 
-    private updateprogressBar() {
+    private updateProgressBar() {
         let value = this.currentHp/this.hp;
         this.hpTween?.stop();
         this.hpTween = tween(this.hpBar).to(0.3, { progress: value }).start();
     }
 
 
-    private die(){
+    protected die(){
         this.emitter.emit("ENEMY_DIE", this.lane);
         this.node.destroy();
     }
@@ -130,10 +130,9 @@ export class EnemyController extends Component {
     }
     
     attackHero(hero: Node) {
-        let heroControll = hero.getComponent(HeroController);
-        if(heroControll) {
-            console.log("dame hero");
-            heroControll.tackDame(this.dame);
+        let heroControl = hero.getComponent(HeroController);
+        if(heroControl) {
+            heroControl.tackDame(this.dame);
         }
     }
 

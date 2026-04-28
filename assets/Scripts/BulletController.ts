@@ -22,7 +22,6 @@ export class BulletController extends Component {
     }
 
     start() {
-
     }
 
     protected update(dt: number): void {
@@ -47,11 +46,10 @@ export class BulletController extends Component {
 
     onBeginContact(self: Collider2D, other: Collider2D, contact: IPhysics2DContact |null ){
         const enemyNode = other.node;
-
         if(other.group === 2 && enemyNode.isValid){
-            const enemyControll = enemyNode.getComponent(EnemyController);
-            if(enemyControll){
-                enemyControll.tackDame(this.dame);
+            const enemyControl = enemyNode.getComponent(EnemyController);
+            if(enemyControl){
+                enemyControl.tackDame(this.dame);
             }
         }
         this.scheduleOnce(() =>{

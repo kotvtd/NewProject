@@ -71,13 +71,13 @@ export class HeroController extends Component {
             return;
         }
         const bullet = instantiate(this.bullet);
-        const bulletControll = bullet.getComponent(BulletController);
-        bulletControll.init(this.dame, this.speed);
+        const bulletControl = bullet.getComponent(BulletController);
+        bulletControl.init(this.dame, this.speed);
         bullet.setParent(this.node);
-        bullet.setWorldPosition(this.node.worldPosition);
+        bullet.setWorldPosition(this.bulletPoint.worldPosition);
     }
 
-    public dectectEnemy(check) {
+    public detectEnemy(check) {
         this.isShoot = check;
     }
 

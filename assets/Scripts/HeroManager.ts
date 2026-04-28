@@ -58,9 +58,9 @@ export class HeroManager extends Component {
         }
         this.mapHero_Lane.get(lane).push(heroSpawn);
         if(this.isLaneDetect[lane]){
-            heroSpawn.getComponent(HeroController).dectectEnemy(true);
+            console.log(this.isLaneDetect[lane]);
+            heroSpawn.getComponent(HeroController).detectEnemy(true);
         }
-        console.log(this.mapHero_Lane);
     }
 
     onChooseHero(data) {
@@ -72,20 +72,19 @@ export class HeroManager extends Component {
         const heros = this.mapHero_Lane.get(laneCheck);
         if(heros) {
             heros.forEach(hero => {
-                hero.getComponent(HeroController)?.dectectEnemy(true);  
+                hero.getComponent(HeroController)?.detectEnemy(true);  
             })
-            this.isLaneDetect[laneCheck] = true;
         }
+        this.isLaneDetect[laneCheck] = true;
     }
 
     onClearEnemy(data) {
         this.isLaneDetect[data] = false;
         const laneClear = data as number;
-
         const heros = this. mapHero_Lane.get(laneClear);
         if(heros) {
             heros.forEach(hero => {
-                hero.getComponent(HeroController)?.dectectEnemy(false);
+                hero.getComponent(HeroController)?.detectEnemy(false);
             })
         }
     }

@@ -1,14 +1,23 @@
-import { _decorator, Component, Label, Node } from 'cc';
+import { _decorator, Component, Label, log, Node, ProgressBar } from 'cc';
 import EmitterManager from './EmitterManager';
 import { GameManager } from './GameManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('Timer')
 export class Timer extends Component {
-    private enemyTime: number = 10;
+    private enemyTime: number = 5;
+    private bossTime: number = 5;
     private time: string ="";
 
-    private isComming: boolean = false;
+    private isComing: boolean = true;
+    private isBossComing = false;
+    private isEnemyComing = true;
+
+
+    private currentTime: number = 0;
+    private timeCount: number = 0;
+
+
 
     private emitter: EmitterManager = EmitterManager.getInstance();
 
@@ -18,32 +27,69 @@ export class Timer extends Component {
     })
     labelTime: Label | null = null;
 
-    start() {
+    @property(ProgressBar)
+    comingImage: ProgressBar | null = null;
 
+    start() {
     }
     protected onEnable(): void {
+        this.emitter.registerEvent("END_ENEMY_WAY", this.clearEnemy, this);
+        this.currentTime = this.enemyTime;
+        this.timeCount = this.currentTime;
+        
     }
 
     protected update(dt: number): void {
+        this.loadProgress();
         if(GameManager.instance.isPause) {
             return;
         }
-        if(this.enemyTime <= 0){
+        if(this.timeCount <= 0){
             return;
         }
-        this.enemyTime -= dt;
-        let tempTime = Math.trunc(this.enemyTime);
+        this.timeCount -= dt;
+        let tempTime = Math.trunc(this.timeCount);
         this.time = tempTime.toString() + "sec";
         this.labelTime.string = this.time;
-        if(tempTime === 0){
-            this.emitter.emit("ENEMY_COMMING");
-            this.enemyTime -= 10;
+        if(this.timeCount <= 0 && this.isComing){
+            if(this.isEnemyComing ) {
+                this.emitter.emit("ENEMY_COMING");
+                this.isComing = false;
+                this.isEnemyComing = false;
+            } else if(this.isBossComing) {
+                console.log(" catch clear enemy way");
+                this.emitter.emit("BOSS_COMING");
+                this.isComing = false;
+                this.isBossComing = false;
+            }
         }
     }
-
+    
     protected onDisable(): void {
-        this.enemyTime = 10;
-        this.isComming = false;
+        this.emitter.removeAllEvents(this);
+        this.enemyTime = 5;
+        this.bossTime = 5;
+        this.isEnemyComing = true;
+        this.isBossComing = false;
+        this.isComing = true;
+    }
+    
+    private clearEnemy(){
+        this.isComing = true;
+        this.isEnemyComing = false;
+        this.isBossComing = true;
+        this.currentTime = this.bossTime;
+        this.timeCount = this.currentTime;
+    }
+
+    private loadProgress() {
+        if(this.timeCount <= 0){
+            this.comingImage.progress = 0;
+            this.labelTime.node.active = false;
+
+            return;
+        }
+        this.comingImage.progress = this.timeCount / this.currentTime;
     }
 
 }

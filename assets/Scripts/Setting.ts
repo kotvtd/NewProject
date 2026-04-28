@@ -6,7 +6,7 @@ const { ccclass, property } = _decorator;
 
 @ccclass('Setting')
 export class Setting extends Component {
-    private emmiter = EmitterManager.getInstance();
+    private emitter = EmitterManager.getInstance();
     private sound: SoundManager | null = null;
 
     @property(Toggle)
@@ -20,42 +20,47 @@ export class Setting extends Component {
     }
     onQuit() {
         this.sound.playClick();
-        this.emmiter.emit("ON_QUIT_ROOM");
+        this.emitter.emit("ON_QUIT_ROOM");
     }
 
     onResume() {
         this.sound.playClick();
-        this.emmiter.emit("ON_RESUME_ROOM");
+        this.emitter.emit("ON_RESUME_ROOM");
     }
 
     onSettingRoom() {
         this.sound.playClick();
-        this.emmiter.emit("ON_SETTING_ROOM", true)
+        this.emitter.emit("ON_SETTING_ROOM", true)
     }
 
     onBGM(event: Toggle) {
         this.sound.playClick();
-        this.emmiter.emit("TOGGLE_BGM", event.isChecked);
+        this.emitter.emit("TOGGLE_BGM", event.isChecked);
     }
 
     onSFX(event: Toggle) {
         this.sound.playClick();
-        this.emmiter.emit("TOGGLE_SFX", event.isChecked);
+        this.emitter.emit("TOGGLE_SFX", event.isChecked);
     }
 
     onSettingLooby() {
         this.sound.playClick();
-        this.emmiter.emit("ON_SETTING_LOBBY", true);
+        this.emitter.emit("ON_SETTING_LOBBY", true);
     }
 
     onQuitLobby() {
         this.sound.playClick();
-        this.emmiter.emit("ON_QUIT_LOBBY");
+        this.emitter.emit("ON_QUIT_LOBBY");
     }
 
     onQuitGame() {
         this.sound.playClick();
-        this.emmiter.emit("ON_QUIT_GAME");
+        this.emitter.emit("ON_QUIT_GAME");
+    }
+
+    onReplay() {
+        this.sound.playClick();
+        this.emitter.emit("ON_REPLAY");
     }
 
 }

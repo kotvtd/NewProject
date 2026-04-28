@@ -1,4 +1,4 @@
-import { _decorator, Component, instantiate, Node, Prefab, ProgressBar, pseudoRandom } from 'cc';
+import { _decorator, Component, instantiate, log, Node, Prefab, ProgressBar, pseudoRandom } from 'cc';
 import EmitterManager from './EmitterManager';
 import { LANES } from './Constant';
 import { EnemyController } from './EnemyController';
@@ -10,9 +10,12 @@ const { ccclass, property } = _decorator;
 @ccclass('EnemyManager')
 export class EnemyManager extends Component {
     private emitter: EmitterManager = EmitterManager.getInstance();
-    private enemyTime: number = 5;
+    private enemyTime: number = 2;
+    private bossTimeInit = 3;
     private timer: number = this.enemyTime;
+    private enemyQuantity: number = 3;
     private enemyCount = 0;
+    private bossCanKill: number = 1;
     private arrEnemyLane: number[] = [0,0,0,0];
 
     @property([Node])
@@ -33,7 +36,8 @@ export class EnemyManager extends Component {
     boss: Prefab = null; 
     
     private listEnemy: Node[] = [];
-    private isComming: boolean = false;
+    private isComing: boolean = false;
+    private isBossComing: boolean = false
 
     protected onLoad(): void {
         this.spawnPoints = this.node.children;
@@ -42,39 +46,47 @@ export class EnemyManager extends Component {
     reset() {
         this.arrEnemyLane = [0,0,0,0];
         this.enemyCount = 0;
-        this.isComming = false;
-
+        this.isComing = false;
     }
     
     protected onEnable(): void {
-        this.emitter.registerEvent("ENEMY_COMMING", this.onEnemyComing, this);
+        this.emitter.registerEvent("ENEMY_COMING", this.onEnemyComing, this);
+        this.emitter.registerEvent("BOSS_COMING", this.onBossComing, this);
         this.emitter.registerEvent("ON_COLLISION_ENEMY_BULLET", this.enemyTackDame, this);
         this.emitter.registerEvent("ENEMY_DIE", this.onEnemyDie, this);
+        this.emitter.registerEvent("BOSS_DIE", this.onBossDie, this);
     }
 
     protected update(dt: number): void {
         if(GameManager.instance.isPause) {
             return;
         }
-        if(!this.isComming) {
+        this.timer -= dt;
+        if(this.isBossComing && this.timer <= 0){
+            this.spawnEnemy(this.boss);
+            this.isBossComing = false;
+        }
+        if(!this.isComing) {
             return;
         }
-        this.timer -= dt;
         if(this.timer <= 0){
-            this.timer = this.enemyTime;
-            if(this.enemyCount >= 5) {
-                this.spawnEnemy(this.boss);
-                this.isComming = false;
+            if(this.enemyCount >= this.enemyQuantity) {
+                this.clearEnemy();
             }
             else {
                 this.spawnEnemy(null);
+                this.timer = this.enemyTime;
             }
         }
-
     }
 
+    private clearEnemy() {
+        console.log("clear enemy");
+        this.isComing = false;
+        this.emitter.emit("END_ENEMY_WAY");
+    }
+    
     private spawnEnemy(prefab: Prefab): void{
-        console.log(prefab);
         let enemyTemp: Prefab | null = null;
         if(prefab){
             enemyTemp = prefab;
@@ -97,8 +109,8 @@ export class EnemyManager extends Component {
         this.emitter.emit("ENEMY_SPAWN", spawnPoint);
         this.enemyCount +=1;
     }
-
-
+    
+    
     protected onDisable(): void {
         for(let enemy of this.listEnemy){
             if(enemy){
@@ -109,26 +121,45 @@ export class EnemyManager extends Component {
         this.emitter.removeAllEvents(this);
         this.reset();
     }
-
+    
     private randomRange(max): number{
         return Math.floor(Math.random() * max);
     }
-
+    
     private onEnemyComing(){
-        this.isComming = true;
-        this.spawnEnemy(null);
+        this.isComing = true;
+        this.timer = 0;
     }
-
-
+    
+    private onBossComing(){
+        console.log("Boss coming");
+        this.isComing = true;
+        this.timer = this.bossTimeInit;
+        this.isBossComing = true;
+    }
+    
     private enemyTackDame(data){
-        console.log(data);
     }
-
+    
     onEnemyDie(data: any) {
         this.arrEnemyLane[data] -= 1;
         if(this.arrEnemyLane[data] <= 0)
         {
             this.emitter.emit("CLEAR_ENEMY", data);
+        }
+    }
+
+    onBossDie(data: any) {
+        this.arrEnemyLane[data] -= 1;
+        this.bossCanKill -=1;
+        console.log(this.bossCanKill);
+        if(this.arrEnemyLane[data] <= 0)
+        {
+            this.emitter.emit("CLEAR_ENEMY", data);
+        }
+        if(this.bossCanKill <= 0) {
+            console.log("Win")
+            this.emitter.emit("WIN", true);
         }
     }
 

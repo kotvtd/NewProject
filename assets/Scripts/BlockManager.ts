@@ -18,7 +18,6 @@ export class BlockManager extends Component {
         this.emitter.registerEvent("ON_PUT_HERO", this.onPutHero, this);
         this.emitter.registerEvent("ON_CHOOSE_HERO", this.onChooseHero, this);
         this.emitter.registerEvent("HERO_DIE", this.onHeroDie, this);
-
         this.listBlock.forEach(block => {
             block.on(Node.EventType.TOUCH_END, this.onClickBlock, this);
         });
@@ -54,7 +53,6 @@ export class BlockManager extends Component {
     onPutHero(data):void {
         const frame: Node = data.frame as Node;
         const hero: Node = data.hero as Node;
-        console.log(hero);
         this.mapHero_Frame.set(hero, frame);
 
         this.listBlock.forEach(block => {

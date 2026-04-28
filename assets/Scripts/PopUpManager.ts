@@ -35,6 +35,11 @@ export class PopUpManager extends Component {
     })
     panel: Node | null = null;
     private emitter = EmitterManager.getInstance();
+    private timeOut = 5;
+    private isEndGame: boolean = false;
+
+    private isWin: boolean = false;
+    private isSetting: boolean = false;
 
     protected onEnable(): void {
         this.emitter.registerEvent("ON_QUIT_ROOM", this.onQuitRoom, this);
@@ -44,15 +49,24 @@ export class PopUpManager extends Component {
         this.emitter.registerEvent("ON_QUIT_LOBBY", this.onQuitLobby, this);
         this.emitter.registerEvent("ON_QUIT_GAME", this.onQuitGame, this);
         this.emitter.registerEvent("LOST", this.onLost, this);
-
+        this.emitter.registerEvent("ON_REPLAY", this.onRePlayGame, this);
+        this.emitter.registerEvent("WIN", this.onWin, this);
     }
 
     start() {
-
+        
     }
 
-    update(deltaTime: number) {
-        
+    protected update(dt: number): void {
+        if(!this.isEndGame) {
+            return;
+        }
+        this.timeOut -= dt;
+        if(this.timeOut <= 0) {
+            this.showWin();
+            this.isEndGame = false;
+        }
+
     }
 
     onSettingRoom(data) {
@@ -62,19 +76,25 @@ export class PopUpManager extends Component {
     }
 
     onSettingLobby(data) {
-        console.log(data);
         this.panel.active = data;
         this.settingLobby.active = data;
     }
 
     onWin(isSetting: boolean) {
-        this.panel.active = isSetting;
-        this.win.active = isSetting;
+        this.onPauseGame();
+        this.isWin = true;
+        this.isEndGame = true;
+        this.isSetting = isSetting;
+    }
+
+    showWin() {
+        this.panel.active = this.isSetting;
+        this.win.active = this.isSetting;
     }
 
     onLost(data) {
         this.onPauseGame();
-        console.log(data);
+        this.isWin = false;
         this.panel.active = data;
         this.lost.active = data;
     }
@@ -82,6 +102,7 @@ export class PopUpManager extends Component {
     onQuitRoom() {
         this.emitter.emit("QUIT_ROOM");
         this.lost.active = false;
+        this.win.active = false;
         this.onResume();
     }
 
@@ -110,6 +131,10 @@ export class PopUpManager extends Component {
 
     onResumeGame() {
         this.emitter.emit("RESUME");
+    }
+
+    onRePlayGame() {
+        this.onQuitRoom();
     }
 
 }
