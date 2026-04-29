@@ -170,7 +170,7 @@ class AttackCommand {
 command.execute();
 ```
 
-## 💡 Ứng dụng nâng cao
+## Ứng dụng nâng cao
 
 * Replay trận đấu
 * Undo trong game chiến thuật
