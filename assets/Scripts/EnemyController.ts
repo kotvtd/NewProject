@@ -1,6 +1,6 @@
-import { _decorator, CCInteger, Component, Node, Tween, tween, Collider2D, Contact2DType, IPhysics2DContact, PhysicsSystem2D,EPhysics2DDrawFlags, ProgressBar } from 'cc';
+import { _decorator, CCInteger, Component, Node, Tween, tween, Collider2D, Contact2DType, IPhysics2DContact, PhysicsSystem2D,EPhysics2DDrawFlags, ProgressBar, Vec2, Vec3 } from 'cc';
 import EmitterManager from './EmitterManager';
-import { LANES } from './Constant';
+import { EnemyState } from './State';
 import { HeroController } from './HeroController';
 import { GameManager } from './GameManager';
 const { ccclass, property } = _decorator;
@@ -16,6 +16,11 @@ export class EnemyController extends Component {
     private timer: number = this.attackTime;
 
     private heroTarget: Node | null = null;
+
+    private state: EnemyState = EnemyState.IDLE;
+
+    private attackTween: Tween<any> = null;
+    private isAttack: boolean = false;
 
 
     @property({
@@ -56,26 +61,45 @@ export class EnemyController extends Component {
             this.collider.on(Contact2DType.BEGIN_CONTACT, this.onBeginContact, this);
             this.collider.on(Contact2DType.END_CONTACT, this.onEndContact, this);
         }
+        this.state = EnemyState.WALK;
+        this.setupTween();
     }
     
-    start() {
-    }
 
     protected update(dt: number): void {
         if(GameManager.instance.isPause) {
             return;
         }
+        this.timer -= dt;
+        switch(this.state) {
+            case EnemyState.IDLE:
+                break;
+            case EnemyState.WALK:
+                this.handleWalk(dt);
+                break;
+            case EnemyState.ATTACK:
+                this.handleAttack();
+                break;
+        }
+    }
+
+
+
+    private handleWalk(dt: number): void {
         if(this.isDetectHero && this.heroTarget) {
-            this.timer -= dt;
-            if(this.timer <= 0) {
-                this.timer =this.attackTime;
-                this.attackHero(this.heroTarget);
-            }
-            return;
+            this.state = EnemyState.ATTACK;
         }
         let pos = this.node.position.clone();
         pos.x -= this.speed * dt;
         this.node.position = pos;
+    }
+
+    private handleAttack() {
+        if(this.timer > 0 || this.isAttack) {
+            return;
+        }
+        this.isAttack = true;
+        this.attackTween.start();
     }
 
     protected onDisable(): void {
@@ -90,6 +114,7 @@ export class EnemyController extends Component {
         if(other.group === 8) {
             this.isDetectHero = true;
             this.heroTarget = other.node;
+            this.state = EnemyState.ATTACK;
         }
         if(other.group === 16) {
             this.emitter.emit("LOST",true);
@@ -101,6 +126,9 @@ export class EnemyController extends Component {
         if(other.group === 8) {
             this.isDetectHero = false;
             this.heroTarget = null;
+            if(!this.isAttack) {
+                this.state = EnemyState.WALK;
+            }
         }
         
     }
@@ -121,6 +149,7 @@ export class EnemyController extends Component {
 
 
     protected die(){
+        this.attackTween?.stop();
         this.emitter.emit("ENEMY_DIE", this.lane);
         this.node.destroy();
     }
@@ -136,7 +165,20 @@ export class EnemyController extends Component {
         }
     }
 
-    
+    private setupTween() {
+        this.attackTween = tween(this.node)
+            .by(0.2, { position : new Vec3(10, 0, 0)})
+            .by(0.2, { position : new Vec3(-20, 0, 0)})
+            .by(0.2, { position : new Vec3(10, 0, 0)})
+            .call(() => {
+                this.timer = this.attackTime;
+                this.isAttack = false;
+                if(this.heroTarget) {
+                    this.attackHero(this.heroTarget)
+                }
+                this.state = this.isDetectHero ? EnemyState.ATTACK : EnemyState.WALK;
+        });
+    }
 
 
 }

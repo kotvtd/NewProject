@@ -13670,7 +13670,7 @@
     },
     "component": "",
     "_componentId": "3d142DJei9MBZRTecXx5Ktg",
-    "handler": "onQuitLobby",
+    "handler": "onQuit",
     "customEventData": ""
   },
   {
@@ -14559,7 +14559,7 @@
     },
     "component": "",
     "_componentId": "3d142DJei9MBZRTecXx5Ktg",
-    "handler": "onQuitLobby",
+    "handler": "onQuit",
     "customEventData": ""
   },
   {
@@ -15079,7 +15079,7 @@
     "_enabled": true,
     "__prefab": null,
     "_clip": {
-      "__uuid__": "6a737a43-48f4-40aa-9c24-77e6fb30f784",
+      "__uuid__": "4907ffe9-78f0-45ac-9ef2-77e4551b17bf",
       "__expectedType__": "cc.AudioClip"
     },
     "_loop": true,

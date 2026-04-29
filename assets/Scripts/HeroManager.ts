@@ -14,7 +14,8 @@ export class HeroManager extends Component {
 
     private mapHero_Lane: Map< number, Node[]> = new Map();
 
-    private isLaneDetect: boolean[] = [false, false, false, false]
+    private isLaneDetect: boolean[] = [false, false, false, false];
+    private enemyPerLane: number[] = [0,0,0,0];
     private emitter = EmitterManager.getInstance();
 
     protected onEnable(): void {
@@ -69,21 +70,24 @@ export class HeroManager extends Component {
 
     onEnemySpawn(data: any) {
         const laneCheck = this.getLane(data.position.y);
-        const heros = this.mapHero_Lane.get(laneCheck);
-        if(heros) {
-            heros.forEach(hero => {
-                hero.getComponent(HeroController)?.detectEnemy(true);  
-            })
-        }
         this.isLaneDetect[laneCheck] = true;
+        this.enemyPerLane[laneCheck] += 1;
+        if(this.enemyPerLane[laneCheck] > 0) {
+            const heroes = this.mapHero_Lane.get(laneCheck);
+            if(heroes) {
+                heroes.forEach(hero => {
+                    hero.getComponent(HeroController)?.detectEnemy(true);  
+                })
+            }
+        }
     }
 
     onClearEnemy(data) {
         this.isLaneDetect[data] = false;
         const laneClear = data as number;
-        const heros = this. mapHero_Lane.get(laneClear);
-        if(heros) {
-            heros.forEach(hero => {
+        const heroes = this. mapHero_Lane.get(laneClear);
+        if(heroes) {
+            heroes.forEach(hero => {
                 hero.getComponent(HeroController)?.detectEnemy(false);
             })
         }
@@ -103,10 +107,10 @@ export class HeroManager extends Component {
 
     onHeroDie(data) {
         let hero: Node = data as Node;
-        this.mapHero_Lane.forEach((heros, lane) => {
-             const index = heros.indexOf(hero);
+        this.mapHero_Lane.forEach((heroes, lane) => {
+             const index = heroes.indexOf(hero);
              if(index !== -1) {
-                heros.splice(index, 1);  
+                heroes.splice(index, 1);  
              }
         })
     }

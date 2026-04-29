@@ -1,8 +1,7 @@
 import { _decorator, Component, EventTouch, Node } from 'cc';
 const { ccclass, property } = _decorator;
 import EmitterManager from './EmitterManager';
-import { LANES } from './Constant';
-import { RUNTIME_BASED } from 'cc/env';
+import { PlayState } from './State';
 
 @ccclass('BlockManager')
 export class BlockManager extends Component {
@@ -12,7 +11,7 @@ export class BlockManager extends Component {
     private emitter = EmitterManager.getInstance();
 
     private mapHero_Frame: Map<Node, Node> = new Map();
-    
+    private state: PlayState = PlayState.JOIN;
 
     protected onEnable(): void {
         this.emitter.registerEvent("ON_PUT_HERO", this.onPutHero, this);

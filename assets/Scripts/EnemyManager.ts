@@ -1,9 +1,10 @@
-import { _decorator, Component, instantiate, log, Node, Prefab, ProgressBar, pseudoRandom } from 'cc';
+import { _decorator, Component, Enum, instantiate, log, Node, Prefab, ProgressBar, pseudoRandom } from 'cc';
 import EmitterManager from './EmitterManager';
 import { LANES } from './Constant';
 import { EnemyController } from './EnemyController';
 import { GameManager } from './GameManager';
 const { ccclass, property } = _decorator;
+import { EnemySpawnState } from './State';
 
 
 
@@ -15,8 +16,12 @@ export class EnemyManager extends Component {
     private timer: number = this.enemyTime;
     private enemyQuantity: number = 3;
     private enemyCount = 0;
+    private bossCount = 0;
+    private aLiveEnemy: number = 0;
     private bossCanKill: number = 1;
     private arrEnemyLane: number[] = [0,0,0,0];
+
+    private state: EnemySpawnState = EnemySpawnState.IDLE;
 
     @property([Node])
     spawnPoints: Node[] = [];
@@ -36,8 +41,6 @@ export class EnemyManager extends Component {
     boss: Prefab = null; 
     
     private listEnemy: Node[] = [];
-    private isComing: boolean = false;
-    private isBossComing: boolean = false
 
     protected onLoad(): void {
         this.spawnPoints = this.node.children;
@@ -46,15 +49,15 @@ export class EnemyManager extends Component {
     reset() {
         this.arrEnemyLane = [0,0,0,0];
         this.enemyCount = 0;
-        this.isComing = false;
+        this.state = EnemySpawnState.IDLE;
     }
     
     protected onEnable(): void {
         this.emitter.registerEvent("ENEMY_COMING", this.onEnemyComing, this);
         this.emitter.registerEvent("BOSS_COMING", this.onBossComing, this);
-        this.emitter.registerEvent("ON_COLLISION_ENEMY_BULLET", this.enemyTackDame, this);
         this.emitter.registerEvent("ENEMY_DIE", this.onEnemyDie, this);
         this.emitter.registerEvent("BOSS_DIE", this.onBossDie, this);
+        this.state = EnemySpawnState.IDLE;
     }
 
     protected update(dt: number): void {
@@ -62,29 +65,56 @@ export class EnemyManager extends Component {
             return;
         }
         this.timer -= dt;
-        if(this.isBossComing && this.timer <= 0){
-            this.spawnEnemy(this.boss);
-            this.isBossComing = false;
-        }
-        if(!this.isComing) {
-            return;
-        }
-        if(this.timer <= 0){
-            if(this.enemyCount >= this.enemyQuantity) {
-                this.clearEnemy();
-            }
-            else {
-                this.spawnEnemy(null);
-                this.timer = this.enemyTime;
-            }
+        switch(this.state) {
+            case EnemySpawnState.IDLE:
+                break;
+            case EnemySpawnState.SPAWNING:
+                this.handleSpawning();
+                break;
+            case EnemySpawnState.WAIT_CLEAR:
+                this.handleWaitClear();
+                break;
+            case EnemySpawnState.BOSS:
+                this.handleBoss();
+                break;
+            case EnemySpawnState.END:
+                break;
         }
     }
 
     private clearEnemy() {
-        console.log("clear enemy");
-        this.isComing = false;
         this.emitter.emit("END_ENEMY_WAY");
     }
+
+    private handleSpawning() {
+        if(this.enemyCount < this.enemyQuantity && this.timer <= 0) {
+            this.spawnEnemy(null);
+            this.timer = this.enemyTime;
+        }
+        if( this.enemyCount >= this.enemyQuantity) {
+            this.state = EnemySpawnState.WAIT_CLEAR;
+        }
+    }
+
+    private handleWaitClear() {
+        if(this.aLiveEnemy <= 0) {
+            this.timer = this.bossTimeInit;
+            this.state = EnemySpawnState.BOSS;
+        }
+    }
+
+    private handleBoss() {
+        if(this.timer <= 0) {
+            if(this.bossCount >= this.bossCanKill) {
+                this.state = EnemySpawnState.END;
+                return;
+            }
+            this.spawnEnemy(this.boss);
+            this.bossCount ++;
+        }
+    }
+
+
     
     private spawnEnemy(prefab: Prefab): void{
         let enemyTemp: Prefab | null = null;
@@ -107,7 +137,8 @@ export class EnemyManager extends Component {
         enemy.setParent(this.enemyLayer);
         enemy.setWorldPosition(spawnPoint.worldPosition);
         this.emitter.emit("ENEMY_SPAWN", spawnPoint);
-        this.enemyCount +=1;
+        this.enemyCount += 1;
+        this.aLiveEnemy += 1;
     }
     
     
@@ -127,25 +158,25 @@ export class EnemyManager extends Component {
     }
     
     private onEnemyComing(){
-        this.isComing = true;
+        this.state = EnemySpawnState.SPAWNING;
         this.timer = 0;
     }
     
     private onBossComing(){
-        console.log("Boss coming");
-        this.isComing = true;
+        this.state = EnemySpawnState.BOSS;
         this.timer = this.bossTimeInit;
-        this.isBossComing = true;
     }
     
-    private enemyTackDame(data){
-    }
     
     onEnemyDie(data: any) {
         this.arrEnemyLane[data] -= 1;
+        this.aLiveEnemy -= 1;
         if(this.arrEnemyLane[data] <= 0)
         {
             this.emitter.emit("CLEAR_ENEMY", data);
+        }
+        if(this.aLiveEnemy <= 0 && this. enemyCount >= this.enemyQuantity) {
+            this.clearEnemy();
         }
     }
 
