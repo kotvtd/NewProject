@@ -18,7 +18,6 @@ export enum PlayState {
 export enum EnemyState {
     IDLE,
     WALK,
-    TAKE_DAME,
     ATTACK,
     DIE,
 }

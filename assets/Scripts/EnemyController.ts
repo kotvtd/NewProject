@@ -1,4 +1,4 @@
-import { _decorator, CCInteger, Component, Node, Tween, tween, Collider2D, Contact2DType, IPhysics2DContact, PhysicsSystem2D,EPhysics2DDrawFlags, ProgressBar, Vec2, Vec3 } from 'cc';
+import { _decorator, CCInteger, Component, Node, Tween, tween, Collider2D, Contact2DType, IPhysics2DContact, PhysicsSystem2D,EPhysics2DDrawFlags, ProgressBar, Vec2, Vec3, Sprite, Color, color } from 'cc';
 import EmitterManager from './EmitterManager';
 import { EnemyState } from './State';
 import { HeroController } from './HeroController';
@@ -14,13 +14,19 @@ export class EnemyController extends Component {
 
     private attackTime: number = 0.8;
     private timer: number = this.attackTime;
+    private sprite: Sprite | null = null;
 
     private heroTarget: Node | null = null;
 
     private state: EnemyState = EnemyState.IDLE;
 
+    private hpTween: Tween<any> | null = null;
+    private hitTween: Tween<any> | null = null;
     private attackTween: Tween<any> = null;
+
     private isAttack: boolean = false;
+
+    private hitColor: Color = new Color(200, 170, 170, 255);
 
 
     @property({
@@ -33,7 +39,7 @@ export class EnemyController extends Component {
     })
     public dame: number = 100;
 
-    private hpTween: Tween<any> | null = null;
+    
 
     @property
     hp: number = 100;
@@ -53,7 +59,7 @@ export class EnemyController extends Component {
         this.currentHp = this.hp;
         this.collider = this.node.getComponent(Collider2D);
         this.hpBar.progress = this.currentHp / this.hp;
-        PhysicsSystem2D.instance.debugDrawFlags = EPhysics2DDrawFlags.Shape;
+        //PhysicsSystem2D.instance.debugDrawFlags = EPhysics2DDrawFlags.Shape;
     }
 
     protected onEnable(): void {
@@ -63,6 +69,11 @@ export class EnemyController extends Component {
         }
         this.state = EnemyState.WALK;
         this.setupTween();
+    }
+
+    protected start(): void {
+        this.sprite = this.node.getComponent(Sprite);
+        console.log(this.sprite)
     }
     
 
@@ -83,8 +94,6 @@ export class EnemyController extends Component {
         }
     }
 
-
-
     private handleWalk(dt: number): void {
         if(this.isDetectHero && this.heroTarget) {
             this.state = EnemyState.ATTACK;
@@ -99,17 +108,20 @@ export class EnemyController extends Component {
             return;
         }
         this.isAttack = true;
+        this.attackTween?.stop();
         this.attackTween.start();
     }
 
+    
     protected onDisable(): void {
         this.emitter.removeAllEvents(this);
     }
-
+    
     protected onDestroy(): void {
-        this.hpTween?.stop();
+        Tween.stopAllByTarget(this.node);
+        Tween.stopAllByTarget(this.sprite);
     }
-
+    
     private onBeginContact(self: Collider2D, other: Collider2D, contact: IPhysics2DContact | null ) {
         if(other.group === 8) {
             this.isDetectHero = true;
@@ -121,7 +133,7 @@ export class EnemyController extends Component {
         }
         
     }
-
+    
     private onEndContact(self: Collider2D, other: Collider2D, contact: IPhysics2DContact | null ) {
         if(other.group === 8) {
             this.isDetectHero = false;
@@ -135,6 +147,10 @@ export class EnemyController extends Component {
 
     public tackDame(dame: number){
         this.currentHp -= dame;
+        this.hitTween?.stop();
+        console.log(this.hitTween)
+        this.hitTween = tween(this.sprite)
+        .to(0.05, { color: Color.RED}).to(0.05, { color: Color.WHITE}).start();
         if(this.currentHp <= 0){
             this.die();
         }
@@ -178,6 +194,7 @@ export class EnemyController extends Component {
                 }
                 this.state = this.isDetectHero ? EnemyState.ATTACK : EnemyState.WALK;
         });
+
     }
 
 

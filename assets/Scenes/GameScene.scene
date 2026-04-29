@@ -739,7 +739,7 @@
   {
     "__type__": "cc.Node",
     "_name": "Label",
-    "_objFlags": 512,
+    "_objFlags": 0,
     "_parent": {
       "__id__": 17
     },
@@ -1062,7 +1062,7 @@
   {
     "__type__": "cc.Node",
     "_name": "Label",
-    "_objFlags": 512,
+    "_objFlags": 0,
     "_parent": {
       "__id__": 26
     },
@@ -1390,7 +1390,7 @@
   {
     "__type__": "cc.Node",
     "_name": "Label",
-    "_objFlags": 512,
+    "_objFlags": 0,
     "_parent": {
       "__id__": 36
     },
@@ -9651,7 +9651,7 @@
   {
     "__type__": "cc.Node",
     "_name": "Label",
-    "_objFlags": 512,
+    "_objFlags": 0,
     "_parent": {
       "__id__": 270
     },
@@ -9972,7 +9972,7 @@
   {
     "__type__": "cc.Node",
     "_name": "Label",
-    "_objFlags": 512,
+    "_objFlags": 0,
     "_parent": {
       "__id__": 279
     },
@@ -11489,7 +11489,7 @@
   {
     "__type__": "cc.Node",
     "_name": "Label",
-    "_objFlags": 512,
+    "_objFlags": 0,
     "_parent": {
       "__id__": 321
     },
@@ -13088,7 +13088,7 @@
   {
     "__type__": "cc.Node",
     "_name": "Label",
-    "_objFlags": 512,
+    "_objFlags": 0,
     "_parent": {
       "__id__": 366
     },
@@ -13409,7 +13409,7 @@
   {
     "__type__": "cc.Node",
     "_name": "Label",
-    "_objFlags": 512,
+    "_objFlags": 0,
     "_parent": {
       "__id__": 375
     },
@@ -13977,7 +13977,7 @@
   {
     "__type__": "cc.Node",
     "_name": "Label",
-    "_objFlags": 512,
+    "_objFlags": 0,
     "_parent": {
       "__id__": 391
     },
@@ -14298,7 +14298,7 @@
   {
     "__type__": "cc.Node",
     "_name": "Label",
-    "_objFlags": 512,
+    "_objFlags": 0,
     "_parent": {
       "__id__": 400
     },
@@ -14915,7 +14915,7 @@
   {
     "__type__": "cc.Node",
     "_name": "SoundManager",
-    "_objFlags": 512,
+    "_objFlags": 0,
     "_parent": {
       "__id__": 1
     },
@@ -14966,7 +14966,7 @@
   {
     "__type__": "cc.Node",
     "_name": "SFX",
-    "_objFlags": 512,
+    "_objFlags": 0,
     "_parent": {
       "__id__": 423
     },
@@ -15028,7 +15028,7 @@
   {
     "__type__": "cc.Node",
     "_name": "BGM",
-    "_objFlags": 512,
+    "_objFlags": 0,
     "_parent": {
       "__id__": 423
     },
