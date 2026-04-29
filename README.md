@@ -1,7 +1,7 @@
 # Game Design Patterns 
 ---
 
-# 🔥 1. Singleton Pattern
+# 1. Singleton Pattern
 
 ##  Khái niệm
 
@@ -25,7 +25,7 @@ GameManager.instance.isPause;
 EmitterManager.getInstance();
 ```
 
-## ⚠️ Lưu ý
+## Lưu ý
 
 * Không lạm dụng (dễ thành “God object”)
 * Khó test nếu dùng quá nhiều
