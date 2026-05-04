@@ -1,4 +1,4 @@
-import { _decorator, AudioClip, AudioSource, Component } from 'cc';
+import { _decorator, AudioClip, AudioSource, Component, director } from 'cc';
 import EmitterManager from './EmitterManager';
 const { ccclass, property } = _decorator;
 
@@ -28,6 +28,7 @@ export class SoundManager extends Component {
             this.node.destroy();
             return;
         }
+        director.addPersistRootNode(this.node);
         SoundManager.instance = this;
     }
     
