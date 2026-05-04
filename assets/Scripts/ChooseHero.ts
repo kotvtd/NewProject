@@ -25,13 +25,18 @@ export class ChooseHero extends Component {
 
     protected onEnable(): void {
         this.chooseHero.forEach(choose=> {
-            choose.on(Node.EventType.TOUCH_END, this.onChooseHero, this)
-        })
-        this.emitter.registerEvent("END_PUT_HERO", this.onEndPutHero, this)
+            choose.on(Node.EventType.TOUCH_END, this.onChooseHero, this);
+        });
+        this.emitter.registerEvent("END_PUT_HERO", this.onEndPutHero, this);
+        this.emitter.registerEvent("RESET_GAME", this.reset, this);
     }
 
     protected start(): void {
 
+    }
+
+    reset() {
+        this.frameFocus.active = false;
     }
 
     protected onDisable(): void {

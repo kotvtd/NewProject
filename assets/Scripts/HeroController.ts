@@ -96,6 +96,7 @@ export class HeroController extends Component {
     }
 
     private die(){
+        this.hpTween?.stop();
         this.node.destroy();
     }
 

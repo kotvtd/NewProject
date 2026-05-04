@@ -20,6 +20,7 @@ export class BlockManager extends Component {
         this.listBlock.forEach(block => {
             block.on(Node.EventType.TOUCH_END, this.onClickBlock, this);
         });
+        this.emitter.registerEvent("RESET_GAME", this.reset, this);
 
     }
 
@@ -81,7 +82,10 @@ export class BlockManager extends Component {
             if(hero && hero.isValid){
                 hero.destroy();
             }
-        })
+            if(frame && frame.isValid){
+                frame.active = false;
+            }
+        });
         this.mapHero_Frame.clear();
     }
 

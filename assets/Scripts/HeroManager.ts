@@ -31,6 +31,7 @@ export class HeroManager extends Component {
 
     reset() {
         this.isLaneDetect = [false, false, false, false];
+        this.enemyPerLane = [0,0,0,0];
         this.mapHero_Lane.forEach((heroes) => {
         heroes.forEach(hero => {
             if (hero && hero.isValid) {
@@ -59,7 +60,6 @@ export class HeroManager extends Component {
         }
         this.mapHero_Lane.get(lane).push(heroSpawn);
         if(this.isLaneDetect[lane]){
-            console.log(this.isLaneDetect[lane]);
             heroSpawn.getComponent(HeroController).detectEnemy(true);
         }
     }
@@ -70,8 +70,10 @@ export class HeroManager extends Component {
 
     onEnemySpawn(data: any) {
         const laneCheck = this.getLane(data.position.y);
-        this.isLaneDetect[laneCheck] = true;
-        this.enemyPerLane[laneCheck] += 1;
+        this.enemyPerLane[laneCheck]++;
+        if (this.enemyPerLane[laneCheck] === 1) {
+            this.isLaneDetect[laneCheck] = true;
+        }
         if(this.enemyPerLane[laneCheck] > 0) {
             const heroes = this.mapHero_Lane.get(laneCheck);
             if(heroes) {
@@ -83,9 +85,10 @@ export class HeroManager extends Component {
     }
 
     onClearEnemy(data) {
+        const lane = data as number;
+        this.enemyPerLane[lane] = 0;
         this.isLaneDetect[data] = false;
-        const laneClear = data as number;
-        const heroes = this. mapHero_Lane.get(laneClear);
+        const heroes = this. mapHero_Lane.get(lane);
         if(heroes) {
             heroes.forEach(hero => {
                 hero.getComponent(HeroController)?.detectEnemy(false);
@@ -102,16 +105,19 @@ export class HeroManager extends Component {
         } else if(posY > -200) {
             return LANES.LANE_3
         }
-        return LANES.LAND_4;
+        return LANES.LANE_4;
     }
 
     onHeroDie(data) {
         let hero: Node = data as Node;
         this.mapHero_Lane.forEach((heroes, lane) => {
-             const index = heroes.indexOf(hero);
-             if(index !== -1) {
+            const index = heroes.indexOf(hero);
+            if(index !== -1) {
                 heroes.splice(index, 1);  
-             }
+            }
+            if (heroes.length === 0) {
+                this.mapHero_Lane.delete(lane);
+            }
         })
     }
 }

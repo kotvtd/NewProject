@@ -1,4 +1,4 @@
-import { _decorator, AudioClip, AudioSource, Component, Node } from 'cc';
+import { _decorator, AudioClip, AudioSource, Component, director, Node } from 'cc';
 import EmitterManager from './EmitterManager';
 const { ccclass, property } = _decorator;
 
@@ -25,7 +25,13 @@ export class SoundManager extends Component {
     
     protected onLoad(): void {
         SoundManager.instance = this;
+        if (SoundManager.instance) {
+            this.node.destroy(); 
+            return;
+        }
+        director.addPersistRootNode(this.node);
     }
+    
     protected onEnable(): void {
         this.emitter.registerEvent("TOGGLE_BGM", this.toggleBGM, this);
         this.emitter.registerEvent("TOGGLE_SFX", this.toggleSFX, this);

@@ -18,7 +18,8 @@ export class EnemyManager extends Component {
     private enemyCount = 0;
     private bossCount = 0;
     private aLiveEnemy: number = 0;
-    private bossCanKill: number = 1;
+    private bossMax: number = 1;
+    private bossKilled: number = 0;
     private arrEnemyLane: number[] = [0,0,0,0];
 
     private state: EnemySpawnState = EnemySpawnState.IDLE;
@@ -48,8 +49,24 @@ export class EnemyManager extends Component {
 
     reset() {
         this.arrEnemyLane = [0,0,0,0];
+
         this.enemyCount = 0;
+        this.bossCount = 0;
+        this.aLiveEnemy = 0;
+
+        this.bossMax = 1;
+        this.bossKilled = 0;
+
+        this.timer = this.enemyTime;
+
         this.state = EnemySpawnState.IDLE;
+
+        this.listEnemy.forEach(enemy => {
+            if(enemy && enemy.isValid){
+                enemy.destroy();
+            }
+        });
+        this.listEnemy.length = 0;
     }
     
     protected onEnable(): void {
@@ -72,7 +89,6 @@ export class EnemyManager extends Component {
                 this.handleSpawning();
                 break;
             case EnemySpawnState.WAIT_CLEAR:
-                this.handleWaitClear();
                 break;
             case EnemySpawnState.BOSS:
                 this.handleBoss();
@@ -89,6 +105,8 @@ export class EnemyManager extends Component {
     private handleSpawning() {
         if(this.enemyCount < this.enemyQuantity && this.timer <= 0) {
             this.spawnEnemy(null);
+            this.aLiveEnemy += 1;
+            this.enemyCount += 1;
             this.timer = this.enemyTime;
         }
         if( this.enemyCount >= this.enemyQuantity) {
@@ -96,21 +114,15 @@ export class EnemyManager extends Component {
         }
     }
 
-    private handleWaitClear() {
-        if(this.aLiveEnemy <= 0) {
-            this.timer = this.bossTimeInit;
-            this.state = EnemySpawnState.BOSS;
-        }
-    }
-
     private handleBoss() {
         if(this.timer <= 0) {
-            if(this.bossCount >= this.bossCanKill) {
+            if(this.bossCount >= this.bossMax) {
                 this.state = EnemySpawnState.END;
                 return;
             }
             this.spawnEnemy(this.boss);
             this.bossCount ++;
+            this.timer = this.bossTimeInit;
         }
     }
 
@@ -137,8 +149,6 @@ export class EnemyManager extends Component {
         enemy.setParent(this.enemyLayer);
         enemy.setWorldPosition(spawnPoint.worldPosition);
         this.emitter.emit("ENEMY_SPAWN", spawnPoint);
-        this.enemyCount += 1;
-        this.aLiveEnemy += 1;
     }
     
     
@@ -162,7 +172,9 @@ export class EnemyManager extends Component {
         this.timer = 0;
     }
     
-    private onBossComing(){
+    private onBossComing(data){
+        this.bossTimeInit = data;
+        this.spawnEnemy(this.boss);
         this.state = EnemySpawnState.BOSS;
         this.timer = this.bossTimeInit;
     }
@@ -171,6 +183,7 @@ export class EnemyManager extends Component {
     onEnemyDie(data: any) {
         this.arrEnemyLane[data] -= 1;
         this.aLiveEnemy -= 1;
+        this.listEnemy = this.listEnemy.filter(e => e && e.isValid);
         if(this.arrEnemyLane[data] <= 0)
         {
             this.emitter.emit("CLEAR_ENEMY", data);
@@ -182,13 +195,12 @@ export class EnemyManager extends Component {
 
     onBossDie(data: any) {
         this.arrEnemyLane[data] -= 1;
-        this.bossCanKill -=1;
-        console.log(this.bossCanKill);
+        this.bossKilled +=1;
         if(this.arrEnemyLane[data] <= 0)
         {
             this.emitter.emit("CLEAR_ENEMY", data);
         }
-        if(this.bossCanKill <= 0) {
+        if(this.bossKilled >= this.bossMax) {
             console.log("Win")
             this.emitter.emit("WIN", true);
         }
@@ -202,7 +214,7 @@ export class EnemyManager extends Component {
         } else if(posY > -200) {
             return LANES.LANE_3
         }
-        return LANES.LAND_4;
+        return LANES.LANE_4;
     }
 
 }

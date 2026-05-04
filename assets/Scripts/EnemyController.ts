@@ -73,7 +73,6 @@ export class EnemyController extends Component {
 
     protected start(): void {
         this.sprite = this.node.getComponent(Sprite);
-        console.log(this.sprite)
     }
     
 
@@ -148,7 +147,6 @@ export class EnemyController extends Component {
     public tackDame(dame: number){
         this.currentHp -= dame;
         this.hitTween?.stop();
-        console.log(this.hitTween)
         this.hitTween = tween(this.sprite)
         .to(0.05, { color: Color.RED}).to(0.05, { color: Color.WHITE}).start();
         if(this.currentHp <= 0){
@@ -172,6 +170,20 @@ export class EnemyController extends Component {
     
     init(data: any) {
         this.lane = data.lane;
+        this.currentHp = this.hp;
+        this.timer = this.attackTime;
+
+        this.isAttack = false;
+        this.isDetectHero = false;
+        this.heroTarget = null;
+        this.state = EnemyState.WALK;
+        if (this.hpBar) {
+            this.hpBar.progress = 1;
+        }
+        this.attackTween?.stop();
+        this.hpTween?.stop();
+        this.hitTween?.stop();
+        this.setupTween();
     }
     
     attackHero(hero: Node) {

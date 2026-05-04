@@ -34,8 +34,7 @@ export class Timer extends Component {
     }
     protected onEnable(): void {
         this.emitter.registerEvent("END_ENEMY_WAY", this.clearEnemy, this);
-        this.currentTime = this.enemyTime;
-        this.timeCount = this.currentTime;
+        this.resetTimer();
         
     }
 
@@ -51,15 +50,13 @@ export class Timer extends Component {
         let tempTime = Math.trunc(this.timeCount);
         this.time = tempTime.toString() + "sec";
         this.labelTime.string = this.time;
-        if(this.timeCount <= 0 && this.isComing){
+        if(this.timeCount <= 0){
             if(this.isEnemyComing ) {
                 this.emitter.emit("ENEMY_COMING");
-                this.isComing = false;
                 this.isEnemyComing = false;
+                this.isBossComing = false;
             } else if(this.isBossComing) {
-                console.log(" catch clear enemy way");
-                this.emitter.emit("BOSS_COMING");
-                this.isComing = false;
+                this.emitter.emit("BOSS_COMING", this.bossTime);
                 this.isBossComing = false;
             }
         }
@@ -75,11 +72,12 @@ export class Timer extends Component {
     }
     
     private clearEnemy(){
-        this.isComing = true;
         this.isEnemyComing = false;
         this.isBossComing = true;
         this.currentTime = this.bossTime;
         this.timeCount = this.currentTime;
+        this.labelTime.node.active = true;
+        this.comingImage.progress = 1;
     }
 
     private loadProgress() {
@@ -90,6 +88,20 @@ export class Timer extends Component {
             return;
         }
         this.comingImage.progress = this.timeCount / this.currentTime;
+    }
+
+    resetTimer() {
+        this.enemyTime = 5;
+        this.bossTime = 5;
+
+        this.isEnemyComing = true;
+        this.isBossComing = false;
+        this.isComing = true;
+
+        this.currentTime = this.enemyTime;
+        this.timeCount = this.currentTime;
+
+        this.labelTime.node.active = true;
     }
 
 }

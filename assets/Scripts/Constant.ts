@@ -27,5 +27,5 @@ export const LANES = {
     LANE_1: 0,
     LANE_2: 1,
     LANE_3: 2,
-    LAND_4: 3
+    LANE_4: 3
 }
