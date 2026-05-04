@@ -14,11 +14,11 @@ export class EnemyManager extends Component {
     private enemyTime: number = 2;
     private bossTimeInit = 3;
     private timer: number = this.enemyTime;
-    private enemyQuantity: number = 3;
+    private enemyQuantity: number = 15;
     private enemyCount = 0;
     private bossCount = 0;
     private aLiveEnemy: number = 0;
-    private bossMax: number = 1;
+    private bossMax: number = 2;
     private bossKilled: number = 0;
     private arrEnemyLane: number[] = [0,0,0,0];
 
@@ -53,8 +53,9 @@ export class EnemyManager extends Component {
         this.enemyCount = 0;
         this.bossCount = 0;
         this.aLiveEnemy = 0;
+        this.enemyQuantity = 15;
 
-        this.bossMax = 1;
+        this.bossMax = 2;
         this.bossKilled = 0;
 
         this.timer = this.enemyTime;
