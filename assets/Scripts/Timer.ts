@@ -1,6 +1,6 @@
 import { _decorator, Component, Label, log, Node, ProgressBar } from 'cc';
-import EmitterManager from './Manager/EmitterManager';
-import { GameManager } from './Manager/GameManager';
+import EmitterManager from './EmitterManager';
+import { GameManager } from './GameManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('Timer')

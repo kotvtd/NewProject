@@ -1,10 +1,10 @@
 import { _decorator, Component, Enum, instantiate, log, Node, Prefab, ProgressBar, pseudoRandom } from 'cc';
 import EmitterManager from './EmitterManager';
-import { LANES } from '../Constant';
-import { EnemyController } from '../Controller/EnemyController';
+import { LANES } from './Constant';
+import { EnemyController } from './EnemyController';
 import { GameManager } from './GameManager';
 const { ccclass, property } = _decorator;
-import { EnemySpawnState } from '../State';
+import { EnemySpawnState } from './State';
 
 
 
@@ -175,6 +175,7 @@ export class EnemyManager extends Component {
     private onBossComing(data){
         this.bossTimeInit = data;
         this.spawnEnemy(this.boss);
+        this.bossCount ++;
         this.state = EnemySpawnState.BOSS;
         this.timer = this.bossTimeInit;
     }

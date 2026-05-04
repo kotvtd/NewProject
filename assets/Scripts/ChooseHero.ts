@@ -1,6 +1,6 @@
 import { _decorator, Component, EventTouch, Node, Prefab } from 'cc';
 const { ccclass, property } = _decorator;
-import EmitterManager from './Manager/EmitterManager';
+import EmitterManager from './EmitterManager';
 
 @ccclass('ChooseHero')
 export class ChooseHero extends Component {

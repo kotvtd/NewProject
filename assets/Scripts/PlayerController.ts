@@ -2,7 +2,7 @@ import { _decorator, CCInteger, Component, Node, Skeleton } from 'cc';
 const { ccclass, property } = _decorator;
 
 import EmitterManager from './EmitterManager';
-import { DIRECTION_CONST } from '../Constant';
+import { DIRECTION_CONST } from './Constant';
 
 @ccclass('PlayerController')
 export class PlayerController extends Component {

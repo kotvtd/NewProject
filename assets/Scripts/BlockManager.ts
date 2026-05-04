@@ -1,7 +1,7 @@
 import { _decorator, Component, EventTouch, Node } from 'cc';
 const { ccclass, property } = _decorator;
-import EmitterManager from '../Manager/EmitterManager';
-import { PlayState } from '../State';
+import EmitterManager from './EmitterManager';
+import { PlayState } from './State';
 
 @ccclass('BlockManager')
 export class BlockManager extends Component {

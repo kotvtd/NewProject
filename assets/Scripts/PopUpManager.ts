@@ -1,5 +1,5 @@
 import { _decorator, Component, game, Node, sys } from 'cc';
-import EmitterManager from './Manager/EmitterManager';
+import EmitterManager from './EmitterManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('PopUpManager')

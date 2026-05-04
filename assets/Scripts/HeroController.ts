@@ -1,7 +1,7 @@
 import { _decorator, Component, instantiate, Node, Prefab, ProgressBar, tween, Tween } from 'cc';
 import { BulletController } from './BulletController';
-import EmitterManager from '../Manager/EmitterManager';
-import { GameManager } from '../Manager/GameManager';
+import EmitterManager from './EmitterManager';
+import { GameManager } from './GameManager';
 const { ccclass, property } = _decorator;
 
 

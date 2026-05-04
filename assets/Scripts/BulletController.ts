@@ -1,7 +1,7 @@
 import { _decorator, Collider2D, Component, Contact2DType, IPhysics2DContact, Node } from 'cc';
-import EmitterManager from '../Manager/EmitterManager';
-import { EnemyController } from '../Controller/EnemyController';
-import { GameManager } from '../Manager/GameManager';
+import EmitterManager from './EmitterManager';
+import { EnemyController } from './EnemyController';
+import { GameManager } from './GameManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('BulletController')
