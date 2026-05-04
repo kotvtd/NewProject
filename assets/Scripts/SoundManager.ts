@@ -25,7 +25,6 @@ export class SoundManager extends Component {
     
     protected onLoad(): void {
         if (SoundManager.instance && SoundManager.instance !== this) {
-            this.node.destroy();
             return;
         }
         director.addPersistRootNode(this.node);
