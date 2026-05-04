@@ -1,8 +1,8 @@
 import { _decorator, Component, instantiate, Node, Prefab } from 'cc';
 const { ccclass, property } = _decorator;
-import EmitterManager from './EmitterManager';
-import { LANES } from './Constant';
-import { HeroController } from './HeroController';
+import EmitterManager from '../Manager/EmitterManager';
+import { LANES } from '../Constant';
+import { HeroController } from '../Controller/HeroController';
 
 @ccclass('HeroManager')
 export class HeroManager extends Component {

@@ -1,6 +1,6 @@
 import { _decorator, CCInteger, Component, Node, Tween, tween, Collider2D, Contact2DType, IPhysics2DContact, PhysicsSystem2D,EPhysics2DDrawFlags, ProgressBar, Vec2, Vec3, Sprite, Color, color } from 'cc';
 import EmitterManager from './EmitterManager';
-import { EnemyState } from './State';
+import { EnemyState } from '../State';
 import { HeroController } from './HeroController';
 import { GameManager } from './GameManager';
 const { ccclass, property } = _decorator;
