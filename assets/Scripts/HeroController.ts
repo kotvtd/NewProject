@@ -8,6 +8,9 @@ const { ccclass, property } = _decorator;
 @ccclass('HeroController')
 export class HeroController extends Component {
     private emitter = EmitterManager.getInstance();
+
+    private bulletLayer: Node | null = null;
+
     @property({
         type: Prefab,
         visible: true
@@ -73,7 +76,7 @@ export class HeroController extends Component {
         const bullet = instantiate(this.bullet);
         const bulletControl = bullet.getComponent(BulletController);
         bulletControl.init(this.dame, this.speed);
-        bullet.setParent(this.node);
+        bullet.setParent(this.bulletLayer);
         bullet.setWorldPosition(this.bulletPoint.worldPosition);
     }
 
@@ -98,6 +101,11 @@ export class HeroController extends Component {
     private die(){
         this.hpTween?.stop();
         this.node.destroy();
+    }
+
+
+    public setBulletLayer(node: Node) {
+        this.bulletLayer = node;
     }
 
 }

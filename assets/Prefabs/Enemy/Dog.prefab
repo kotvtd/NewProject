@@ -452,7 +452,7 @@
     },
     "speed": 35,
     "dame": 10,
-    "hp": 100,
+    "hp": 350,
     "hpBar": {
       "__id__": 8
     },
@@ -481,12 +481,12 @@
     "_restitution": 0,
     "_offset": {
       "__type__": "cc.Vec2",
-      "x": 1.5,
+      "x": -66.3,
       "y": -7
     },
     "_size": {
       "__type__": "cc.Size",
-      "width": 204.7,
+      "width": 69.1,
       "height": 168.4
     },
     "_id": ""

@@ -594,12 +594,12 @@
     "_restitution": 0,
     "_offset": {
       "__type__": "cc.Vec2",
-      "x": 16.9,
+      "x": -77.8,
       "y": 9.7
     },
     "_size": {
       "__type__": "cc.Size",
-      "width": 220.7,
+      "width": 31.2,
       "height": 161.3
     },
     "_id": ""
@@ -654,7 +654,7 @@
     },
     "speed": 20,
     "dame": 50,
-    "hp": 100,
+    "hp": 1000,
     "hpBar": {
       "__id__": 8
     },

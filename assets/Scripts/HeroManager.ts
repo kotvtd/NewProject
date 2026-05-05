@@ -12,11 +12,16 @@ export class HeroManager extends Component {
     })
     public heroPrefab: Prefab = null;
 
+    @property(Node)
+    public bulletLayer: Node | null = null;
+
     private mapHero_Lane: Map< number, Node[]> = new Map();
 
     private isLaneDetect: boolean[] = [false, false, false, false];
     private enemyPerLane: number[] = [0,0,0,0];
     private emitter = EmitterManager.getInstance();
+
+
 
     protected onEnable(): void {
         this.emitter.registerEvent("CLICK", this.spawnHero, this);
@@ -24,6 +29,8 @@ export class HeroManager extends Component {
         this.emitter.registerEvent("ENEMY_SPAWN", this.onEnemySpawn, this);
         this.emitter.registerEvent("CLEAR_ENEMY", this.onClearEnemy, this);
         this.emitter.registerEvent("HERO_DIE", this.onHeroDie, this);
+        this.emitter.registerEvent("RESET_ROOM", this.reset, this);
+        
     }
 
     start() {
@@ -48,6 +55,8 @@ export class HeroManager extends Component {
     spawnHero(data){
         let heroSpawn = instantiate(this.heroPrefab);
         heroSpawn.setParent(this.node);
+        const heroController = heroSpawn.getComponent(HeroController);
+        heroController.setBulletLayer(this.bulletLayer);
         data as Node;
         heroSpawn.setWorldPosition(data.worldPosition);
         const lane = this.getLane(data.position.y);
@@ -60,7 +69,7 @@ export class HeroManager extends Component {
         }
         this.mapHero_Lane.get(lane).push(heroSpawn);
         if(this.isLaneDetect[lane]){
-            heroSpawn.getComponent(HeroController).detectEnemy(true);
+            heroController.detectEnemy(true);
         }
     }
 

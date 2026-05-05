@@ -60,7 +60,8 @@ export class Setting extends Component {
 
     onReplay() {
         this.sound.playClick();
-        this.emitter.emit("ON_REPLAY");
+        console.log("Replay"); 
+        this.emitter.emit("RESET_ROOM");
     }
 
 }

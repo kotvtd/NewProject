@@ -21,8 +21,11 @@ export class SoundManager extends Component {
 
     @property(AudioClip)
     public click: AudioClip = null;
-    
-    
+
+    @property(AudioClip)
+    public warning: AudioClip = null;
+
+
     protected onLoad(): void {
         if (SoundManager.instance && SoundManager.instance !== this) {
             return;
@@ -74,6 +77,10 @@ export class SoundManager extends Component {
 
     playClick(){
         this.playSFX(this.click);
+    }
+
+    playWarning(){
+        this.playSFX(this.warning);
     }
 }
 

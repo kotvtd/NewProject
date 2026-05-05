@@ -1,17 +1,12 @@
-import { _decorator, Component, Label, log, Node, ProgressBar } from 'cc';
+import { _decorator, Color, Component, Label, log, Node, ProgressBar, Sprite, tween, UIOpacity } from 'cc';
 import EmitterManager from './EmitterManager';
 import { GameManager } from './GameManager';
+import { SoundManager } from './SoundManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('Timer')
 export class Timer extends Component {
-    private enemyTime: number = 5;
-    private bossTime: number = 5;
-    private time: string ="";
-
-    private isComing: boolean = true;
-    private isBossComing = false;
-    private isEnemyComing = true;
+    private isUpdateUI: boolean = false;
 
 
     private currentTime: number = 0;
@@ -30,79 +25,77 @@ export class Timer extends Component {
     @property(ProgressBar)
     comingImage: ProgressBar | null = null;
 
-    start() {
-    }
+
+    @property(Node)
+    bossWarning: Node | null = null;
+
     protected onEnable(): void {
-        this.emitter.registerEvent("END_ENEMY_WAY", this.clearEnemy, this);
-        this.resetTimer();
-        
+        this.emitter.registerEvent("START_ENEMY_WAY", this.enemyPhase, this);
+        this.emitter.registerEvent("START_BOSS_WAY", this.bossPhase, this);
+    }
+
+    protected start(): void {
+        // this.emitter.registerEvent("START_ENEMY_WAY", this.enemyPhase, this);
+        // this.emitter.registerEvent("START_BOSS_WAY", this.bossPhase, this);
+        this.bossWarning.active = false; 
     }
 
     protected update(dt: number): void {
-        this.loadProgress();
-        if(GameManager.instance.isPause) {
+        if(GameManager.instance.isPause || !this.isUpdateUI) {
             return;
         }
-        if(this.timeCount <= 0){
-            return;
-        }
-        this.timeCount -= dt;
-        let tempTime = Math.trunc(this.timeCount);
-        this.time = tempTime.toString() + "sec";
-        this.labelTime.string = this.time;
-        if(this.timeCount <= 0){
-            if(this.isEnemyComing ) {
-                this.emitter.emit("ENEMY_COMING");
-                this.isEnemyComing = false;
-                this.isBossComing = false;
-            } else if(this.isBossComing) {
-                this.emitter.emit("BOSS_COMING", this.bossTime);
-                this.isBossComing = false;
-            }
-        }
-    }
-    
-    protected onDisable(): void {
-        this.emitter.removeAllEvents(this);
-        this.enemyTime = 5;
-        this.bossTime = 5;
-        this.isEnemyComing = true;
-        this.isBossComing = false;
-        this.isComing = true;
-    }
-    
-    private clearEnemy(){
-        this.isEnemyComing = false;
-        this.isBossComing = true;
-        this.currentTime = this.bossTime;
-        this.timeCount = this.currentTime;
-        this.labelTime.node.active = true;
-        this.comingImage.progress = 1;
-    }
 
-    private loadProgress() {
-        if(this.timeCount <= 0){
+        this.timeCount -= dt;
+                if(this.timeCount <= 0){
             this.comingImage.progress = 0;
             this.labelTime.node.active = false;
 
             return;
         }
+        this.labelTime.string = Math.ceil(this.timeCount).toString();
         this.comingImage.progress = this.timeCount / this.currentTime;
+
     }
+    
+    protected onDisable(): void {
+        this.emitter.removeAllEvents(this);
+        this.isUpdateUI = false;
+    }
+    
 
-    resetTimer() {
-        this.enemyTime = 5;
-        this.bossTime = 5;
-
-        this.isEnemyComing = true;
-        this.isBossComing = false;
-        this.isComing = true;
-
-        this.currentTime = this.enemyTime;
+    private enemyPhase(data) {
+        console.log("EnemyPhase: ", data);
+        this.isUpdateUI = true;
+        this.currentTime = data;
         this.timeCount = this.currentTime;
-
         this.labelTime.node.active = true;
+        this.comingImage.progress = 1;
     }
+
+    private bossPhase(data) {
+        this.bossWarning.active = true;
+        let opacity = this.bossWarning.getComponent(UIOpacity);
+        if(opacity) {
+            opacity.opacity =225;
+        }
+        tween(opacity).repeat(
+            3,
+            tween().call(() => {
+                SoundManager.inst.playWarning();
+            })
+            .to(0.65, { opacity: 0 })
+            .to(0.65, { opacity: 225 })
+        ).call(() => {
+            this.bossWarning.active =false;
+        })
+        .start();
+        this.isUpdateUI = true;
+        this.currentTime = data;
+        this.timeCount = this.currentTime;
+        this.labelTime.node.active = true;
+        this.comingImage.progress = 1;
+    }
+
 
 }
 

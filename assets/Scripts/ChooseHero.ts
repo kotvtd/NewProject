@@ -28,7 +28,7 @@ export class ChooseHero extends Component {
             choose.on(Node.EventType.TOUCH_END, this.onChooseHero, this);
         });
         this.emitter.registerEvent("END_PUT_HERO", this.onEndPutHero, this);
-        this.emitter.registerEvent("RESET_GAME", this.reset, this);
+        this.emitter.registerEvent("RESET_ROOM", this.reset, this);
     }
 
     protected start(): void {

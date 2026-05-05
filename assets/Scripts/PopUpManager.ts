@@ -35,7 +35,7 @@ export class PopUpManager extends Component {
     })
     panel: Node | null = null;
     private emitter = EmitterManager.getInstance();
-    private timeOut = 5;
+    private timeOut = 3;
     private isEndGame: boolean = false;
 
     private isWin: boolean = false;
@@ -49,8 +49,8 @@ export class PopUpManager extends Component {
         this.emitter.registerEvent("ON_QUIT_LOBBY", this.onQuitLobby, this);
         this.emitter.registerEvent("ON_QUIT_GAME", this.onQuitGame, this);
         this.emitter.registerEvent("LOST", this.onLost, this);
-        this.emitter.registerEvent("ON_REPLAY", this.onRePlayGame, this);
         this.emitter.registerEvent("WIN", this.onWin, this);
+        this.emitter.registerEvent("RESET_ROOM", this.resetRoom, this);
     }
 
     start() {
@@ -133,8 +133,10 @@ export class PopUpManager extends Component {
         this.emitter.emit("RESUME");
     }
 
-    onRePlayGame() {
-        this.onQuitRoom();
+    resetRoom() {
+        this.lost.active = false;
+        this.win.active = false;
+        this.onResume();
     }
 
 }

@@ -29,3 +29,8 @@ export const LANES = {
     LANE_3: 2,
     LANE_4: 3
 }
+
+export const SCENE = {
+    LOADING: "Loadding",
+    GAMESCENE: "GameScene"
+}

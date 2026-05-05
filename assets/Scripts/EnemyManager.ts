@@ -53,9 +53,9 @@ export class EnemyManager extends Component {
         this.enemyCount = 0;
         this.bossCount = 0;
         this.aLiveEnemy = 0;
-        this.enemyQuantity = 15;
+        this.enemyQuantity = 30;
 
-        this.bossMax = 2;
+        this.bossMax = 3;
         this.bossKilled = 0;
 
         this.timer = this.enemyTime;
@@ -75,6 +75,7 @@ export class EnemyManager extends Component {
         this.emitter.registerEvent("BOSS_COMING", this.onBossComing, this);
         this.emitter.registerEvent("ENEMY_DIE", this.onEnemyDie, this);
         this.emitter.registerEvent("BOSS_DIE", this.onBossDie, this);
+        this.emitter.registerEvent("RESET_ROOM", this.reset, this);
         this.state = EnemySpawnState.IDLE;
     }
 
@@ -190,7 +191,7 @@ export class EnemyManager extends Component {
         {
             this.emitter.emit("CLEAR_ENEMY", data);
         }
-        if(this.aLiveEnemy <= 0 && this. enemyCount >= this.enemyQuantity) {
+        if(this.aLiveEnemy <= 0 && this.enemyCount >= this.enemyQuantity) {
             this.clearEnemy();
         }
     }

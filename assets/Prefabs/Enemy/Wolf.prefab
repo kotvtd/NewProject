@@ -481,12 +481,12 @@
     "_restitution": 0,
     "_offset": {
       "__type__": "cc.Vec2",
-      "x": 13.5,
+      "x": -63.5,
       "y": -7.3
     },
     "_size": {
       "__type__": "cc.Size",
-      "width": 202.8,
+      "width": 48.8,
       "height": 167.2
     },
     "_id": ""
